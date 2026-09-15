@@ -2,6 +2,13 @@
   command = "npm run build"
   publish = "dist"
 
+[build.environment]
+  # VITE_APP_PASSCODE is intentionally inlined into the client bundle — it's
+  # a casual UI lock, not real auth (see README). Netlify's secrets scanner
+  # would otherwise fail the build treating it as an accidentally-leaked
+  # secret, since it can't tell the difference.
+  SECRETS_SCAN_OMIT_KEYS = "VITE_APP_PASSCODE"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
