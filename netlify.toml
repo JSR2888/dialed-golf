@@ -3,11 +3,17 @@
   publish = "dist"
 
 [build.environment]
-  # VITE_APP_PASSCODE is intentionally inlined into the client bundle — it's
-  # a casual UI lock, not real auth (see README). Netlify's secrets scanner
-  # would otherwise fail the build treating it as an accidentally-leaked
-  # secret, since it can't tell the difference.
-  SECRETS_SCAN_OMIT_KEYS = "VITE_APP_PASSCODE"
+  # These are all meant to ship in the client bundle — they're not leaked
+  # secrets, Netlify's scanner just can't tell public client keys apart from
+  # real ones. See README for why each is safe to expose:
+  #   VITE_APP_PASSCODE      - casual UI lock, not real auth
+  #   VITE_SUPABASE_ANON_KEY - Supabase's anon key is designed to be public;
+  #                            protection is meant to come from RLS policies
+  #   VITE_SUPABASE_URL      - just a public API endpoint
+  #   VITE_MAPBOX_TOKEN      - a Mapbox *public* token (pk.), designed for
+  #                            browser use; protected by domain restriction,
+  #                            not secrecy
+  SECRETS_SCAN_OMIT_KEYS = "VITE_APP_PASSCODE,VITE_SUPABASE_ANON_KEY,VITE_SUPABASE_URL,VITE_MAPBOX_TOKEN"
 
 [[redirects]]
   from = "/*"
